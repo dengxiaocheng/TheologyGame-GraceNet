@@ -1,0 +1,185 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #1a1a2e;
+  font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+  color: #e0e0e0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  cursor: default;
+}
+
+/* 顶部 HUD */
+.hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.hud-level {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.hud-status {
+  font-size: 14px;
+  color: #aaa;
+}
+
+/* 底部提示区 */
+.hint {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  color: #888;
+  text-align: center;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.3s;
+}
+
+/* 关卡标题动画覆盖层 */
+.level-title {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(26, 26, 46, 0.9);
+  z-index: 100;
+  pointer-events: none;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.level-title.hidden {
+  display: none;
+}
+
+.level-title.fade-out {
+  animation: fadeOut 0.8s ease-in forwards;
+}
+
+.level-title-main {
+  font-size: 36px;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  margin-bottom: 12px;
+  animation: titleSlideIn 0.8s ease-out;
+}
+
+.level-title-sub {
+  font-size: 18px;
+  color: #ccc;
+  animation: titleSlideIn 1s ease-out;
+}
+
+/* 模态弹窗 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 200;
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal {
+  background: #16213e;
+  border: 1px solid #ffd700;
+  border-radius: 12px;
+  padding: 32px 40px;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+  max-width: 400px;
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffd700;
+  margin-bottom: 16px;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+.modal-body {
+  font-size: 16px;
+  color: #ccc;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.modal-btn {
+  background: transparent;
+  border: 1px solid #ffd700;
+  color: #ffd700;
+  padding: 10px 32px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+.modal-btn:hover {
+  background: rgba(255, 215, 0, 0.1);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+/* 动画关键帧 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes titleSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
