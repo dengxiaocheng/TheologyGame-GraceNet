@@ -2,19 +2,114 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>恩典之网</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <canvas id="gameCanvas"></canvas>
 
+  <!-- 标题屏幕 -->
+  <div id="titleScreen" class="title-screen">
+    <div class="title-logo">恩典之网</div>
+    <div class="title-subtitle">连接恩典，照亮世界</div>
+    <button id="titleBtn" class="title-start-btn">开始</button>
+  </div>
+
   <div id="hud" class="hud">
-    <div id="hudLevel" class="hud-level"></div>
-    <div id="hudStatus" class="hud-status"></div>
+    <div class="hud-left">
+      <div id="hudLevel" class="hud-level"></div>
+      <div id="hudStatus" class="hud-status"></div>
+    </div>
+    <div class="hud-right">
+      <div id="scoreDisplay" class="score-display hidden">0</div>
+      <div id="comboDisplay" class="combo-display hidden"></div>
+      <div id="starDisplay" class="star-display hidden"></div>
+    </div>
+    <div id="hudProgress" class="hud-progress">
+      <div id="hudProgressFill" class="hud-progress-fill"></div>
+    </div>
   </div>
 
   <div id="hint" class="hint"></div>
+
+  <!-- 叙事文本 -->
+  <div id="narrative" class="narrative"></div>
+
+  <!-- Toast 通知 -->
+  <div id="toast" class="toast"></div>
+
+  <!-- 撤销/重置按钮 -->
+  <button id="undoBtn" class="game-btn undo-btn hidden" aria-label="撤销">↩</button>
+  <button id="resetBtn" class="game-btn reset-btn hidden" aria-label="重置">↺</button>
+
+  <!-- 设置按钮 -->
+  <button id="settingsBtn" class="game-btn settings-btn hidden" aria-label="设置">⚙</button>
+
+  <!-- 设置面板 -->
+  <div id="settingsPanel" class="settings-panel hidden">
+    <div class="settings-content">
+      <div class="settings-header">
+        <span class="settings-title">设置</span>
+        <button id="settingsClose" class="settings-close" aria-label="关闭">✕</button>
+      </div>
+      <div class="settings-group">
+        <label class="settings-label">音乐音量</label>
+        <input type="range" id="musicSlider" class="settings-slider" min="0" max="100" value="70">
+      </div>
+      <div class="settings-group">
+        <label class="settings-label">音效音量</label>
+        <input type="range" id="sfxSlider" class="settings-slider" min="0" max="100" value="80">
+      </div>
+      <div class="settings-group">
+        <label class="settings-label">粒子质量</label>
+        <select id="particleSelect" class="settings-select">
+          <option value="low">低</option>
+          <option value="medium" selected>中</option>
+          <option value="high">高</option>
+        </select>
+      </div>
+      <div class="settings-group">
+        <label class="settings-label">显示提示</label>
+        <button id="hintToggle" class="settings-toggle active" aria-label="提示开关"></button>
+      </div>
+      <div class="settings-group">
+        <label class="settings-label">动画效果</label>
+        <button id="animToggle" class="settings-toggle active" aria-label="动画开关"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 成就通知横幅 -->
+  <div id="achievementBanner" class="achievement-banner hidden">
+    <div class="achievement-icon" id="achievementIcon">★</div>
+    <div class="achievement-info">
+      <div class="achievement-name" id="achievementName"></div>
+      <div class="achievement-desc" id="achievementDesc"></div>
+    </div>
+  </div>
+
+  <!-- 对话框 -->
+  <div id="dialogueBox" class="dialogue-box hidden">
+    <div class="dialogue-avatar" id="dialogueAvatar"></div>
+    <div class="dialogue-content">
+      <div class="speaker-name" id="speakerName"></div>
+      <div class="dialogue-text" id="dialogueText"></div>
+    </div>
+    <div class="dialogue-continue">点击继续 ▸</div>
+  </div>
+
+  <!-- 统计面板 -->
+  <div id="statsPanel" class="stats-panel hidden">
+    <div class="stats-title">本关统计</div>
+    <div class="stats-grid">
+      <div class="stat-row"><span class="stat-label">连接数</span><span class="stat-value" id="statEdges">0</span></div>
+      <div class="stat-row"><span class="stat-label">用时</span><span class="stat-value" id="statTime">0s</span></div>
+      <div class="stat-row"><span class="stat-label">最高连击</span><span class="stat-value" id="statCombo">0</span></div>
+      <div class="stat-row"><span class="stat-label">得分</span><span class="stat-value" id="statScore">0</span></div>
+      <div class="stat-row"><span class="stat-label">星级</span><span class="stat-value" id="statStars">☆☆☆</span></div>
+    </div>
+  </div>
 
   <div id="modal" class="modal-overlay hidden">
     <div class="modal">
@@ -27,6 +122,52 @@
   <div id="levelTitle" class="level-title hidden">
     <div id="levelTitleMain" class="level-title-main"></div>
     <div id="levelTitleSub" class="level-title-sub"></div>
+  </div>
+
+  <!-- Tutorial overlay -->
+  <div id="tutorial" class="tutorial-overlay hidden">
+    <div class="tutorial-content">
+      <div class="tutorial-title">如何游玩</div>
+      <div class="tutorial-steps">
+        <div class="tutorial-step">
+          <div class="tutorial-icon">①</div>
+          <div class="tutorial-text">从一个节点<span class="tutorial-highlight">拖动</span>到另一个节点，建立连接</div>
+        </div>
+        <div class="tutorial-step">
+          <div class="tutorial-icon">②</div>
+          <div class="tutorial-text">用正确的类型<span class="tutorial-highlight">解锁</span>被封锁的节点</div>
+        </div>
+        <div class="tutorial-step">
+          <div class="tutorial-icon">③</div>
+          <div class="tutorial-text">让恩典之水流<span class="tutorial-highlight">遍所有节点</span>即可通关</div>
+        </div>
+      </div>
+      <button id="tutorialBtn" class="tutorial-btn">明白了</button>
+    </div>
+  </div>
+
+  <!-- Level select screen -->
+  <div id="levelSelect" class="level-select hidden">
+    <div class="level-select-title">选择关卡</div>
+    <div id="levelStarsRow" class="level-stars-row"></div>
+    <div id="levelGrid" class="level-grid"></div>
+    <button id="levelSelectBack" class="level-select-back">返回</button>
+  </div>
+
+  <!-- Achievement list modal -->
+  <div id="achievementPanel" class="achievement-panel hidden">
+    <div class="achievement-panel-content">
+      <div class="achievement-panel-title">成就</div>
+      <div id="achievementList" class="achievement-list"></div>
+      <button id="achievementClose" class="achievement-close-btn">关闭</button>
+    </div>
+  </div>
+
+  <!-- Node info popup -->
+  <div id="nodeInfo" class="node-info hidden">
+    <div id="nodeInfoName" class="node-info-name"></div>
+    <div id="nodeInfoType" class="node-info-type"></div>
+    <div id="nodeInfoDesc" class="node-info-desc"></div>
   </div>
 
   <!-- 按依赖顺序加载 -->
